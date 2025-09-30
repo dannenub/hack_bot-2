@@ -31,6 +31,7 @@
               maxlength="10"
               placeholder="Entrez votre ID (10 chiffres)"
               class="w-full p-3 rounded-xl border-2 text-center outline-none transition mb-4 ${valid ? "border-green-500 bg-green-200 text-black" : "border-gray-400 bg-white text-black"}"
+              value="${userId}"
             />
             <button
               id="enterBtn"
@@ -45,11 +46,13 @@
           </div>
         `;
 
-        document.getElementById("userId").addEventListener("input", (e) => {
+        const input = document.getElementById("userId");
+        input.focus(); // сразу ставим курсор внутрь
+
+        input.addEventListener("input", (e) => {
           userId = e.target.value;
           valid = /^\d{10}$/.test(userId);
           render();
-          document.getElementById("userId").value = userId;
         });
 
         document.getElementById("enterBtn").addEventListener("click", () => {
