@@ -1,0 +1,87 @@
+import { useState } from "react";
+
+export default function AviatorPredictor() {
+  const [step, setStep] = useState("start");
+  const [userId, setUserId] = useState("");
+  const [valid, setValid] = useState(false);
+  const [coef, setCoef] = useState(null);
+  const [history, setHistory] = useState([]);
+
+  function checkId(v) {
+    setUserId(v);
+    const ok = /^\d{10}$/.test(v);
+    setValid(ok);
+  }
+
+  function enter() {
+    if (valid) setStep("predict");
+    else alert("Veuillez saisir un ID correct (10 chiffres)");
+  }
+
+  function predict() {
+    const r = Math.random();
+    let c;
+    if (r < 0.75) c = 1 + Math.random() * 2.5;
+    else if (r < 0.95) c = 3.5 + Math.random() * 6.5;
+    else c = 10 + Math.random() * 70;
+    c = c.toFixed(2);
+    setCoef(c);
+    setHistory([{ v: c, t: new Date().toLocaleTimeString() }, ...history].slice(0, 10));
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white p-4 font-sans">
+      {step === "start" && (
+        <div className="bg-zinc-900 p-8 rounded-3xl w-full max-w-md text-center shadow-2xl border border-gray-700">
+          <h2 className="text-2xl font-extrabold mb-4 text-green-400">Bot créé pour la plateforme BetAndYou</h2>
+          <input
+            type="text"
+            value={userId}
+            onChange={(e) => checkId(e.target.value)}
+            maxLength={10}
+            placeholder="Entrez votre ID (10 chiffres)"
+            className={`w-full p-3 rounded-xl border-2 text-center outline-none transition mb-4 ${
+              valid ? "border-green-500 bg-green-200 text-black" : "border-gray-400 bg-white text-black"
+            }`}
+          />
+          <button
+            onClick={enter}
+            className="bg-green-500 hover:bg-green-400 transition text-black font-bold px-4 py-2 rounded-xl w-full"
+          >
+            Entrer
+          </button>
+
+          <div className="mt-6 space-y-2 text-left">
+            <p className="italic text-gray-300">« Oui, ça marche ! » ★★★★★</p>
+            <p className="italic text-gray-300">« Merci pour ce bot VIP » ★★★★★</p>
+          </div>
+        </div>
+      )}
+
+      {step === "predict" && (
+        <div className="bg-zinc-900 p-8 rounded-3xl w-full max-w-md text-center shadow-2xl border border-gray-700">
+          <h2 className="text-3xl font-extrabold mb-6 text-green-400">🎯 Aviator Prédicteur</h2>
+          <button
+            onClick={predict}
+            className="bg-green-500 hover:bg-green-400 transition text-black font-bold px-6 py-3 rounded-xl"
+          >
+            Prédire
+          </button>
+          {coef && <div className="text-yellow-400 text-4xl font-bold mt-6">Coefficient : {coef}x</div>}
+          {history.length > 0 && (
+            <div className="mt-6 text-left">
+              <h3 className="text-sm text-gray-400 mb-2">Historique :</h3>
+              <ul className="text-sm space-y-1 max-h-40 overflow-y-auto">
+                {history.map((h, i) => (
+                  <li key={i} className="text-gray-300">
+                    {h.v}x • {h.t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
